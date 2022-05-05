@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="com-meituan-catering-management-infra" />
+        <module name="com-meituan-catering-management-biz" />
+        <module name="com-meituan-catering-management-dao" />
+        <module name="com-meituan-catering-management-api" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="com-meituan-catering-management-api" target="1.8" />
+      <module name="com-meituan-catering-management-biz" target="1.8" />
+      <module name="com-meituan-catering-management-dao" target="1.8" />
+      <module name="com-meituan-catering-management-infra" target="1.8" />
+      <module name="sjst-spring-training" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="com-meituan-catering-management-api" options="-parameters" />
+      <module name="com-meituan-catering-management-biz" options="-parameters" />
+      <module name="com-meituan-catering-management-dao" options="-parameters" />
+      <module name="com-meituan-catering-management-infra" options="-parameters" />
+    </option>
+  </component>
+</project>

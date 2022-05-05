@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/api/com-meituan-catering-management-api.iml" filepath="$PROJECT_DIR$/api/com-meituan-catering-management-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/biz/com-meituan-catering-management-biz.iml" filepath="$PROJECT_DIR$/biz/com-meituan-catering-management-biz.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dao/com-meituan-catering-management-dao.iml" filepath="$PROJECT_DIR$/dao/com-meituan-catering-management-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/infra/com-meituan-catering-management-infra.iml" filepath="$PROJECT_DIR$/infra/com-meituan-catering-management-infra.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/sjst-spring-training.iml" filepath="$PROJECT_DIR$/.idea/sjst-spring-training.iml" />
+    </modules>
+  </component>
+</project>

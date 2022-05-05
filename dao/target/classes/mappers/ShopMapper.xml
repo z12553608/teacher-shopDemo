@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meituan.catering.management.shop.dao.mapper.ShopMapper">
+
+    <resultMap id="BaseResultMap" type="com.meituan.catering.management.shop.dao.model.entity.ShopDO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId"/>
+        <result column="created_by" jdbcType="BIGINT" property="createdBy"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="last_modified_by" jdbcType="BIGINT" property="lastModifiedBy"/>
+        <result column="last_modified_at" jdbcType="TIMESTAMP" property="lastModifiedAt"/>
+        <result column="superior_id" jdbcType="BIGINT" property="superiorId"/>
+        <result column="business_no" jdbcType="NVARCHAR" property="businessNo"/>
+        <result column="name" jdbcType="NVARCHAR" property="name"/>
+        <result column="business_type_code" jdbcType="TINYINT" property="businessTypeCode"/>
+        <result column="contact_telephone" jdbcType="NVARCHAR" property="contactTelephone"/>
+        <result column="contact_cellphone" jdbcType="NVARCHAR" property="contactCellphone"/>
+        <result column="contact_name" jdbcType="NVARCHAR" property="contactName"/>
+        <result column="contact_address" jdbcType="NVARCHAR" property="contactAddress"/>
+        <result column="management_type_code" jdbcType="TINYINT" property="managementTypeCode"/>
+        <result column="opening_hours_start" jdbcType="NVARCHAR" property="openingHoursStart"/>
+        <result column="opening_hours_end" jdbcType="NVARCHAR" property="openingHoursEnd"/>
+        <result column="business_area" jdbcType="VARCHAR" property="businessArea"/>
+        <result column="comment" jdbcType="NVARCHAR" property="comment"/>
+        <result column="enabled" jdbcType="TINYINT" property="enabled"/>
+        <result column="version" jdbcType="TINYINT" property="version"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,tenant_id
+        ,created_by
+        ,created_at
+        ,last_modified_by
+        ,last_modified_at
+        ,superior_id
+        ,business_no
+        ,name
+        ,business_type_code
+        ,contact_telephone
+        ,contact_cellphone
+        ,contact_name
+        ,contact_address
+        ,management_type_code
+        ,opening_hours_start
+        ,opening_hours_end
+        ,business_area
+        ,comment
+        ,enabled
+        ,version
+    </sql>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop
+        WHERE tenant_id = #{tenantId}
+    </select>
+
+    <select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop
+        WHERE tenant_id = #{tenantId}
+        and id = #{id}
+        LIMIT 1
+    </select>
+
+    <select id="findByBusinessNo" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop
+        WHERE tenant_id = #{tenantId}
+        and business_no = #{businessNo}
+        LIMIT 1
+    </select>
+
+    <select id="findSubordinateIds" resultType="java.lang.Long">
+        select id
+        from shop
+        where
+        tenant_id = #{tenantId}
+        and superior_id in
+        <foreach collection="superiorIds" item="superiorId" separator="," open="(" close=")">
+            #{superiorId}
+        </foreach>
+    </select>
+
+    <select id="countByBusinessNo" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM shop
+        WHERE business_no = #{businessNo}
+    </select>
+
+    <select id="countForPage" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM shop
+        <where>
+            tenant_id = #{tenantId}
+            <if test="hasKeywords">
+                AND (
+                <if test="name != null">
+                    name like #{name}
+                </if>
+                <if test="contactTelephone != null">
+                    OR contact_telephone like #{contactTelephone}
+                </if>
+                <if test="contactCellphone != null">
+                    OR contact_cellphone like #{contactCellphone}
+                </if>
+                <if test="contactName != null">
+                    OR contact_name like #{contactName}
+                </if>
+                <if test="contactAddress != null">
+                    OR contact_address like #{contactAddress}
+                </if>
+                )
+            </if>
+            <if test="managementTypeCodes != null">
+                AND management_type_code in
+                <foreach collection="managementTypeCodes" item="managementTypeCode"
+                         separator="," open="(" close=")">
+                    #{managementTypeCode}
+                </foreach>
+            </if>
+            <if test="businessTypeCodes != null">
+                AND business_type_code in
+                <foreach collection="businessTypeCodes" item="businessTypeCode"
+                         separator="," open="(" close=")">
+                    #{businessTypeCode}
+                </foreach>
+            </if>
+            <if test="privilegedShopIds != null">
+                AND id in
+                <foreach collection="privilegedShopIds" item="privilegedShopId"
+                         separator="," open="(" close=")">
+                    #{privilegedShopId}
+                </foreach>
+            </if>
+            <if test="enabledStatusCodeSet != null">
+                AND enabled in
+                <foreach collection="enabledStatusCodeSet" item="enabledStatusCode"
+                         separator="," open="(" close=")">
+                    #{enabledStatusCode}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="searchForPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop
+        <where>
+            tenant_id = #{condition.tenantId}
+            <if test="condition.hasKeywords">
+                AND (
+                <if test="condition.name != null">
+                    name like #{condition.name}
+                </if>
+                <if test="condition.contactTelephone != null">
+                    OR contact_telephone like #{condition.contactTelephone}
+                </if>
+                <if test="condition.contactCellphone != null">
+                    OR contact_cellphone like #{condition.contactCellphone}
+                </if>
+                <if test="condition.contactName != null">
+                    OR contact_name like #{condition.contactName}
+                </if>
+                <if test="condition.contactAddress != null">
+                    OR contact_address like #{condition.contactAddress}
+                </if>
+                )
+            </if>
+            <if test="condition.managementTypeCodes != null">
+                AND management_type_code in
+                <foreach collection="condition.managementTypeCodes" item="managementTypeCode"
+                         separator="," open="(" close=")">
+                    #{managementTypeCode}
+                </foreach>
+            </if>
+            <if test="condition.businessTypeCodes != null">
+                AND business_type_code in
+                <foreach collection="condition.businessTypeCodes" item="businessTypeCode"
+                         separator="," open="(" close=")">
+                    #{businessTypeCode}
+                </foreach>
+            </if>
+            <if test="condition.privilegedShopIds != null">
+                AND id in
+                <foreach collection="condition.privilegedShopIds" item="privilegedShopId"
+                         separator="," open="(" close=")">
+                    #{privilegedShopId}
+                </foreach>
+            </if>
+            <if test="condition.enabledStatusCodeSet != null">
+                AND enabled in
+                <foreach collection="condition.enabledStatusCodeSet" item="enabledStatusCode"
+                         separator="," open="(" close=")">
+                    #{enabledStatusCode}
+                </foreach>
+            </if>
+        </where>
+        <if test="sortFields != null">
+            ORDER BY
+            <foreach collection="sortFields" item="sortField" separator=",">
+                ${sortField.sqlColumn} ${sortField.direction}
+            </foreach>
+        </if>
+        limit #{pagination.skip},#{pagination.limit}
+    </select>
+
+    <insert id="insert"
+            keyProperty="id"
+            useGeneratedKeys="true">
+        INSERT INTO shop (<include refid="Base_Column_List"/>)
+        VALUES (
+        #{id}
+        ,#{tenantId}
+        ,#{createdBy}
+        ,#{createdAt}
+        ,#{lastModifiedBy}
+        ,#{lastModifiedAt}
+        ,#{superiorId}
+        ,#{businessNo}
+        ,#{name}
+        ,#{businessTypeCode}
+        ,#{contactTelephone}
+        ,#{contactCellphone}
+        ,#{contactName}
+        ,#{contactAddress}
+        ,#{managementTypeCode}
+        ,#{openingHoursStart}
+        ,#{openingHoursEnd}
+        ,#{businessArea}
+        ,#{comment}
+        ,#{enabled}
+        ,1
+        )
+    </insert>
+
+    <update id="partialUpdateByBusinessNo">
+        UPDATE shop
+        <set>
+            <if test="superiorId != null">
+                superior_id = #{superiorId}
+            </if>
+            <if test="name != null">
+                ,name = #{name}
+            </if>
+            <if test="lastModifiedBy != null">
+                ,last_modified_by = #{lastModifiedBy}
+            </if>
+            <if test="lastModifiedAt != null">
+                ,last_modified_at = #{lastModifiedAt}
+            </if>
+            <if test="businessTypeCode != null">
+                ,business_type_code = #{businessTypeCode}
+            </if>
+            <if test="contactTelephone != null">
+                ,contact_telephone = #{contactTelephone}
+            </if>
+            <if test="contactCellphone != null">
+                ,contact_cellphone = #{contactCellphone}
+            </if>
+            <if test="contactName != null">
+                ,contact_name = #{contactName}
+            </if>
+            <if test="contactAddress != null">
+                ,contact_address = #{contactAddress}
+            </if>
+            <if test="managementTypeCode != null">
+                ,management_type_code = #{managementTypeCode}
+            </if>
+            <if test="openingHoursStart != null">
+                ,opening_hours_start = #{openingHoursStart}
+            </if>
+            <if test="openingHoursEnd != null">
+                ,opening_hours_end = #{openingHoursEnd}
+            </if>
+            <if test="businessArea != null">
+                ,business_area = #{businessArea}
+            </if>
+            <if test="comment != null">
+                ,comment = #{comment}
+            </if>
+            <if test="enabled != null">
+                ,enabled = #{enabled}
+            </if>
+            ,version = version + 1
+        </set>
+        WHERE tenant_id = #{tenantId}
+        and version = #{version}
+        and business_no = #{businessNo}
+    </update>
+
+    <update id="fullyUpdateByBusinessNo">
+        UPDATE shop
+        <set>
+            superior_id = #{superiorId}
+            ,name = #{name}
+            ,last_modified_by = #{lastModifiedBy}
+            ,last_modified_at = #{lastModifiedAt}
+            ,business_type_code = #{businessTypeCode}
+            ,contact_telephone = #{contactTelephone}
+            ,contact_cellphone = #{contactCellphone}
+            ,contact_name = #{contactName}
+            ,contact_address = #{contactAddress}
+            ,management_type_code = #{managementTypeCode}
+            ,opening_hours_start = #{openingHoursStart}
+            ,opening_hours_end = #{openingHoursEnd}
+            ,business_area = #{businessArea}
+            ,comment = #{comment}
+            ,enabled = #{enabled}
+            ,version = version + 1
+        </set>
+        WHERE tenant_id = #{tenantId}
+        and version = #{version}
+        and business_no = #{businessNo}
+    </update>
+
+    <update id="changeEnabledStatusById">
+        UPDATE shop
+        set enabled = #{enabled}
+          , version = version + 1
+        WHERE tenant_id = #{tenantId}
+          and id = #{id}
+          and version = #{version}
+    </update>
+
+</mapper>
